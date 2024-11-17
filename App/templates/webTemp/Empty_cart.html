@@ -1,0 +1,30 @@
+{% extends "webTemp/base.html" %}
+{% load static %}
+{% block content %}
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin-top: 50px;
+    }
+    .cart {
+        border: 1px solid #ccc;
+        padding: 20px;
+        display: inline-block;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .message {
+        font-size: 1.5em;
+        color: #555;
+    }
+</style>
+</head>
+<body>
+<div class="cart">
+    <p class="message">No products in the cart</p>
+</div>
+</body>
+
+
+{% endblock %}

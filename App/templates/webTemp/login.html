@@ -1,0 +1,22 @@
+{% extends "webTemp/base.html" %}
+{% load static %}
+{% block content %}
+<br>
+
+<div style="display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f0f0f0;">
+    <form action="/login/" method="POST" style="background-color: #ffffff; padding: 40px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); width: 250px;">
+        <h2 style="text-align: center; color: #024657; margin-bottom: 20px;">LOGIN</h2>
+        {% csrf_token %}
+        <label for="username" >username:</label><br>
+        <input type="username"name="username"><br>
+
+        <label for="Password">Password:</label><br>
+        <input type="Password"name="Password"><br>
+        
+        <input type="submit" value="login" style=" background-color: #4CAF50; color: white; border: none;  ">
+        <h1> </h1><a href="{% url 'sign_in' %}" style="color: red; text-align: left;"><small>Register Now</small></a>
+        </a>
+    </form>
+</div>
+<br>
+{% endblock content %}

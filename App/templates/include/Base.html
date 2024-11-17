@@ -1,0 +1,53 @@
+{% load static %}
+<!--{% include "include/header.html"%}-->
+
+<!DOCTYPE html>
+
+
+<html lang="en">
+<!--<![endif]-->
+<head>
+	<meta charset="utf-8" />
+	<title>E-Commerce Front End Theme</title>
+	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
+	<meta content="" name="description" />
+	<meta content="" name="author" />
+
+	<!-- ================== BEGIN BASE CSS STYLE ================== -->
+	<link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+	<link href="{% static 'assets/plugins/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" />
+	<link href="{% static 'assets/plugins/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" />
+	<link href="{% static 'assets/css/style.min.css' %}" rel="stylesheet" />
+	<link href="{% static 'assets/css/style-responsive.min.css' %}" rel="stylesheet" />
+	<link href="{% static 'assets/css/theme/default.css' %}" id="theme" rel="stylesheet" />
+	<link href="{% static 'assets/css/animate.min.css' %}" rel="stylesheet" />
+	<!-- ================== END BASE CSS STYLE ================== -->
+
+	<!-- ================== BEGIN BASE JS ================== -->
+	<script src="{% static 'assets/plugins/pace/pace.min.js' %}"></script>
+	<!-- ================== END BASE JS ================== -->
+</head>
+<body>
+
+<!-- ================== BEGIN BASE JS ================== -->
+	<script src="{% static 'assets/plugins/jquery/jquery-1.9.1.min.js' %}"></script>
+	<script src="{% static 'assets/plugins/jquery/jquery-migrate-1.1.0.min.js' %}"></script>
+	<script src="{% static 'assets/plugins/bootstrap/js/bootstrap.min.js' %}"></script>
+	<!--[if lt IE 9]>
+		<script src="{% static 'assets/crossbrowserjs/html5shiv.js' %}"></script>
+		<script src="{% static 'assets/crossbrowserjs/respond.min.js' %}"></script>
+		<script src="{% static 'assets/crossbrowserjs/excanvas.min.js' %}"></script>
+	<![endif]-->
+	<script src="{% static 'assets/plugins/jquery-cookie/jquery.cookie.js' %}"></script>
+    <script src="{% static 'assets/js/apps.min.js' %}"></script>
+	<!-- ================== END BASE JS ================== -->
+
+	<script>
+	    $(document).ready(function() {
+	        App.init();
+	    });
+	</script>
+</body>
+</html>
+
+<!--{% include "include/footer.html"%}-->

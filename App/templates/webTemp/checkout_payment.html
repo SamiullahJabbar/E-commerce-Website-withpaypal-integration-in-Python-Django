@@ -1,0 +1,274 @@
+{% extends "webTemp/base.html" %}
+{% load static %}
+{% block content %}
+
+
+        <!-- BEGIN #checkout-payment -->
+        <div class="section-container" id="checkout-payment">
+            <!-- BEGIN container -->
+            <div class="container">
+                <!-- BEGIN checkout -->
+                <div class="checkout">
+                    <form action="/checkout_complete/" method="POST" name="form_payment" class="form-horizontal">
+                        {% csrf_token %}
+                        <!-- BEGIN checkout-header -->
+                        <div class="checkout-header">
+                            <!-- BEGIN row -->
+                            <div class="row">
+                                <!-- BEGIN col-3 -->
+                                <div class="col-md-3 col-sm-3">
+                                    <div class="step">
+                                        <a href="checkout_cart.html">
+                                            <div class="number">1</div>
+                                            <div class="info">
+                                                <div class="title">Delivery Options</div>
+                                                <div class="desc">Lorem ipsum dolor sit amet.</div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                                <!-- END col-3 -->
+                                <!-- BEGIN col-3 -->
+                                <div class="col-md-3 col-sm-3">
+                                    <div class="step">
+                                        <a href="checkout_info.html">
+                                            <div class="number">2</div>
+                                            <div class="info">
+                                                <div class="title">Shipping Address</div>
+                                                <div class="desc">Vivamus eleifend euismod.</div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                                <!-- END col-3 -->
+                                <!-- BEGIN col-3 -->
+                                <div class="col-md-3 col-sm-3">
+                                    <div class="step active">
+                                        <a href="#">
+                                            <div class="number">3</div>
+                                            <div class="info">
+                                                <div class="title">Payment</div>
+                                                <div class="desc">Aenean ut pretium ipsum. </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                                <!-- END col-3 -->
+                                <!-- BEGIN col-3 -->
+                                <div class="col-md-3 col-sm-3">
+                                    <div class="step">
+                                        <a href="checkout_complete.html">
+                                            <div class="number">4</div>
+                                            <div class="info">
+                                                <div class="title">Complete Payment</div>
+                                                <div class="desc">Curabitur interdum libero.</div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                                <!-- END col-3 -->
+                            </div>
+                            <!-- END row -->
+                        </div>
+                        <!-- END checkout-header -->
+                        <!-- BEGIN checkout-body -->
+                        
+                        <div class="checkout-body">
+							<h4 class="checkout-title">Choose a payment method</h4>
+                            <div id="paypal-button-container"></div>
+
+                            <script src="https://www.paypal.com/sdk/js?client-id=AeDZyeHtBKlULHAfuCkhbsx9pC93NdOmLCDaI1VHdkbVnYrgLlZbXjf5-NCEunabUOP9a7beTWfWJ5Bh&currency=USD"></script>
+
+
+                            <div id="paypal-button-container"></div>
+                            <script>
+                                // Render the PayPal button into #paypal-button-container
+                                paypal.Buttons({
+                        
+                                    // Call your server to set up the transaction
+                                    createOrder: function(data,actions){
+                                        return actions.order.create({
+                                            purchase_units :[{
+                                                amount:{
+                                                value:15000 
+                                                }
+                                            }]
+                                        });
+                                    },
+                        
+                                    // Call your server to finalize the transaction
+                                    onApprove: function(data, actions) {
+                                        return fetch('/demo/checkout/api/paypal/order/' + data.orderID + '/capture/', {
+                                            method: 'post'
+                                        }).then(function(res) {
+                                            return res.json();
+                                        }).then(function(orderData) {
+                                            // Three cases to handle:
+                                            //   (1) Recoverable INSTRUMENT_DECLINED -> call actions.restart()
+                                            //   (2) Other non-recoverable errors -> Show a failure message
+                                            //   (3) Successful transaction -> Show confirmation or thank you
+                        
+                                            // This example reads a v2/checkout/orders capture response, propagated from the server
+                                            // You could use a different API or structure for your 'orderData'
+                                            var errorDetail = Array.isArray(orderData.details) && orderData.details[0];
+                        
+                                            if (errorDetail && errorDetail.issue === 'INSTRUMENT_DECLINED') {
+                                                return actions.restart(); // Recoverable state, per:
+                                                // https://developer.paypal.com/docs/checkout/integration-features/funding-failure/
+                                            }
+                        
+                                            if (errorDetail) {
+                                                var msg = 'Sorry, your transaction could not be processed.';
+                                                if (errorDetail.description) msg += '\n\n' + errorDetail.description;
+                                                if (orderData.debug_id) msg += ' (' + orderData.debug_id + ')';
+                                                return alert(msg); // Show a failure message (try to avoid alerts in production environments)
+                                            }
+                        
+                                            // Successful capture! For demo purposes:
+                                            console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+                                            var transaction = orderData.purchase_units[0].payments.captures[0];
+                                            alert('Transaction '+ transaction.status + ': ' + transaction.id + '\n\nSee console for all available details');
+                        
+                                            // Replace the above to show a success message within this page, e.g.
+                                            // const element = document.getElementById('paypal-button-container');
+                                            // element.innerHTML = '';
+                                            // element.innerHTML = '<h3>Thank you for your payment!</h3>';
+                                            // Or go to another URL:  actions.redirect('thank_you.html');
+                                        });
+                                    }
+                        
+                                }).render('#paypal-button-container');
+                            </script>
+                        
+                        <!-- END checkout-body -->
+                        <!-- BEGIN checkout-footer -->
+                        <div class="checkout-footer">
+                            <a href="checkout_info.html" class="btn btn-white btn-lg pull-left">Back</a>
+                            <button type="submit" a href="{% url 'checkout_complete' %}" class="btn btn-inverse btn-lg p-l-30 p-r-30 m-l-10">Proceed</button>
+                        </div>
+                        <!-- END checkout-footer -->
+                    </form>
+                </div>
+                <!-- END checkout -->
+                
+                <h4 class="checkout-title m-t-30 m-b-15">Payment Frequently Asked Questions</h4>
+                <!-- BEGIN checkout-question-list -->
+                <div class="row checkout-question-list" id="checkout-faq">
+                    <!-- BEGIN col-6 -->
+                    <div class="col-md-6">
+                        <div class="clearfix">
+                            <div class="question">
+                                <a href="#checkout-faq-1" class="collapsed" data-toggle="collapse" data-parent="#checkout-faq">
+                                    <span class="dash">-</span> Is my Credit Card / Debit Card details protected?
+                                </a>   
+                            </div>
+                            <div class="answer collapse in" id="checkout-faq-1">
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam hendrerit, felis vel tincidunt sodales, urna metus rutrum leo, sit amet finibus velit ante nec lacus. Cras erat nunc, pulvinar nec leo at, rhoncus elementum orci. Nullam ut sapien ultricies, gravida ante ut, ultrices nunc.
+                            </div> 
+                        </div>
+                        <div class="clearfix m-t-10">
+                            <div class="question">
+                                <a href="#checkout-faq-2" class="collapsed" data-toggle="collapse" data-parent="#checkout-faq">
+                                    <span class="dash">-</span> Can I use a Debit Card to make payment??
+                                </a>   
+                            </div>
+                            <div class="answer collapse in" id="checkout-faq-2">
+                                Curabitur vitae venenatis odio, eget molestie mauris. Nullam vitae turpis at mi consequat rutrum quis quis mi. Vestibulum imperdiet neque non libero condimentum, quis sodales magna molestie. Interdum et malesuada fames ac ante ipsum primis in faucibus. 
+                            </div> 
+                        </div>
+                        <div class="clearfix m-t-10">
+                            <div class="question">
+                                <a href="#checkout-faq-3" class="collapsed" data-toggle="collapse" data-parent="#checkout-faq">
+                                    <span class="dash">-</span> Credit Card/Debit Card transaction keep failing. Why?
+                                </a>   
+                            </div>
+                            <div class="answer collapse in" id="checkout-faq-3">
+                                Cras malesuada mi quis purus pharetra egestas. Curabitur auctor sapien est, eu porttitor velit ornare in. Fusce porta suscipit diam at placerat. Donec lobortis iaculis accumsan. Ut semper felis vel nisi aliquam facilisis.
+                            </div> 
+                        </div>
+                    </div>
+                    <!-- END col-6 -->
+                    <!-- BEGIN col-6 -->
+                    <div class="col-md-6">
+                        <div class="clearfix">
+                            <div class="question">
+                                <a href="#checkout-faq-4" class="collapsed" data-toggle="collapse" data-parent="#checkout-faq">
+                                    <span class="dash">-</span> Did not receive the Pin Code on my mobile?
+                                </a>   
+                            </div>
+                            <div class="answer collapse in" id="checkout-faq-4">
+                                Duis gravida sem eu arcu efficitur, laoreet egestas nibh posuere. Pellentesque suscipit tincidunt porttitor. Aliquam vitae massa vel justo lobortis posuere. Nulla tempor enim at auctor dignissim. Aenean sit amet venenatis odio.
+                            </div> 
+                        </div>
+                        <div class="clearfix m-t-10">
+                            <div class="question">
+                                <a href="#checkout-faq-5" class="collapsed" data-toggle="collapse" data-parent="#checkout-faq">
+                                    <span class="dash">-</span> My credit card has been charged, but my order shows failed?
+                                </a>   
+                            </div>
+                            <div class="answer collapse in" id="checkout-faq-5">
+                                Nunc consectetur tellus libero, at tempor dolor scelerisque id. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc feugiat ligula vitae tincidunt sagittis. Etiam congue ligula purus, ut fringilla ante interdum eu.
+                            </div> 
+                        </div>
+                    </div>
+                    <!-- END col-6 -->
+                </div>
+                <!-- END checkout-question-list -->
+            </div>
+            <!-- END container -->
+        </div>
+        <!-- END #checkout-payment -->
+    
+        <!-- BEGIN #policy -->
+        <div id="policy" class="section-container p-t-30 p-b-30 bg-white">
+            <!-- BEGIN container -->
+            <div class="container">
+                <!-- BEGIN row -->
+                <div class="row">
+                    <!-- BEGIN col-4 -->
+                    <div class="col-md-4 col-sm-4">
+                        <!-- BEGIN policy -->
+                        <div class="policy">
+                            <div class="policy-icon"><i class="fa fa-truck"></i></div>
+                            <div class="policy-info">
+                                <h4>Free Delivery Over $100</h4>
+                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                            </div>
+                        </div>
+                        <!-- END policy -->
+                    </div>
+                    <!-- END col-4 -->
+                    <!-- BEGIN col-4 -->
+                    <div class="col-md-4 col-sm-4">
+                        <!-- BEGIN policy -->
+                        <div class="policy">
+                            <div class="policy-icon"><i class="fa fa-shield"></i></div>
+                            <div class="policy-info">
+                                <h4>1 Year Warranty For Phones</h4>
+                                <p>Cras laoreet urna id dui malesuada gravida. <br />Duis a lobortis dui.</p>
+                            </div>
+                        </div>
+                        <!-- END policy -->
+                    </div>
+                    <!-- END col-4 -->
+                    <!-- BEGIN col-4 -->
+                    <div class="col-md-4 col-sm-4">
+                        <!-- BEGIN policy -->
+                        <div class="policy">
+                            <div class="policy-icon"><i class="fa fa-user-md"></i></div>
+                            <div class="policy-info">
+                                <h4>6 Month Warranty For Accessories</h4>
+                                <p>Fusce ut euismod orci. Morbi auctor, sapien non eleifend iaculis.</p>
+                            </div>
+                        </div>
+                        <!-- END policy -->
+                    </div>
+                    <!-- END col-4 -->
+                </div>
+                <!-- END row -->
+            </div>
+            <!-- END container -->
+        </div>
+        <!-- END #policy -->
+    
+        {% endblock content%}
